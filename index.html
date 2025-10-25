@@ -155,6 +155,7 @@
       if (target <= now){
         return { months:0,weeks:0,days:0,hours:0,minutes:0,seconds:0, done:true };
       }
+
       const md = monthDiff(now, target);
       let cursor = md.after;
 
@@ -164,13 +165,17 @@
       const secPer = { week: 604800, day: 86400, hour: 3600, min: 60 };
       let remain = sTotal;
 
-      const weeks   = Math.floor(remain / secPer.week); remain -= weeks  * secPer.week;
-      const days    = Math.floor(remain / secPer.day);  remain -= days   * secPer.day;
-      const hours   = Math.floor(remain / secPer.hour); remain -= hours  * secPer.hour;
-      const minutes = Math.floor(remain / secPer.min);  remain -= minutes* secPer.min;
-      const seconds = remain;
+      const weeks   = Math.max(0, Math.floor(remain / secPer.week));  remain -= weeks  * secPer.week;
+      const days    = Math.max(0, Math.floor(remain / secPer.day));   remain -= days   * secPer.day;
+      const hours   = Math.max(0, Math.floor(remain / secPer.hour));  remain -= hours  * secPer.hour;
+      const minutes = Math.max(0, Math.floor(remain / secPer.min));   remain -= minutes* secPer.min;
+      const seconds = Math.max(0, remain);
 
-      return { months: md.months, weeks, days, hours, minutes, seconds, done:false };
+      return { 
+        months: md.months, 
+        weeks, days, hours, minutes, seconds, 
+        done:false 
+      };
     }
 
     function pickFour(parts){
