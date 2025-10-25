@@ -4,112 +4,28 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Aftel</title>
-
-  <!-- Lora font -->
   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
-
   <style>
     :root{
-      --fg: #eeede7;           /* text colour */
-      --bg: #000000;           /* background */
-      --gap: 1.2rem;           /* gap between tiles */
-      --radius: 1.25rem;       /* rounded corners */
-      --tile-pad: 1.1rem;      /* padding inside tiles */
-      --label-size: clamp(0.7rem, 1.2vw, 1.1rem);
-      --value-size: clamp(1.6rem, 7vw, 4.8rem);
-      --heading-size: clamp(1rem, 2.2vw, 1.6rem);
-      --line-height: 1.05;
-      --weight: 600;           /* Lora weight for values */
+      --fg:#eeede7; --bg:#000; --gap:1.2rem; --radius:1.25rem; --tile-pad:1.1rem;
+      --label-size:clamp(0.7rem,1.2vw,1.1rem);
+      --value-size: clamp(1.2rem, 4vw, 3.2rem);
+      --heading-size:clamp(1rem,2.2vw,1.6rem);
+      --line-height:1.05; --weight:600;
     }
-
-    html,body{
-      height:100%;
-      margin:0;
-      background: var(--bg);
-      color: var(--fg);
-      font-family: "Lora", serif;
-    }
-
-    .wrap{
-      min-height:100%;
-      box-sizing:border-box;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: clamp(10px, 4vw, 36px);
-      text-align:center;
-    }
-
-    .timer{
-      width: 100%;
-      max-width: 1200px;
-    }
-
-    .heading{
-      font-size: var(--heading-size);
-      line-height: 1.35;
-      margin: 0;
-      letter-spacing: 0.4px;
-      opacity: 0.95;
-    }
-
-    .spacer{
-      height: clamp(8px, 1.8vw, 20px);
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--gap);
-    }
-
-    .tile{
-      border: 1px solid rgba(238,237,231,0.15);
-      background: rgba(255,255,255,0.02);
-      border-radius: var(--radius);
-      padding: var(--tile-pad);
-      text-align:center;
-      box-shadow: 0 0.5rem 2rem rgba(0,0,0,0.25) inset, 0 0.25rem 1rem rgba(0,0,0,0.25);
-      transition: transform 0.2s ease;
-    }
-    .tile:hover { transform: translateY(-3px); }
-
-    .value{
-      display:block;
-      font-size: var(--value-size);
-      line-height: var(--line-height);
-      font-weight: var(--weight);
-      letter-spacing: 0.5px;
-    }
-
-    .label{
-      display:block;
-      font-size: var(--label-size);
-      letter-spacing: 0.6px;
-      opacity: 0.9;
-      margin-top: 0.35rem;
-    }
-
-    /* Small screens: 2 columns */
-    @media (max-width: 520px){
-      .grid{ grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (min-width: 1500px){
-      :root{
-        --gap: 1.6rem;
-        --tile-pad: 1.4rem;
-      }
-    }
-
-    /* Final message style */
-    .final{
-      font-size: clamp(1.2rem, 3vw, 2.2rem);
-      line-height: 1.25;
-      font-weight: 600;
-      letter-spacing: 0.2px;
-      margin: 0;
-    }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:"Lora",serif;}
+    .wrap{min-height:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:clamp(10px,4vw,36px);text-align:center;}
+    .timer{width:100%;max-width:1200px;}
+    .heading{font-size:var(--heading-size);line-height:1.35;margin:0;letter-spacing:.4px;opacity:.95;}
+    .spacer{height:clamp(8px,1.8vw,20px);}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);}
+    .tile{border:1px solid rgba(238,237,231,.15);background:rgba(255,255,255,.02);border-radius:var(--radius);padding:var(--tile-pad);text-align:center;box-shadow:0 .5rem 2rem rgba(0,0,0,.25) inset,0 .25rem 1rem rgba(0,0,0,.25);transition:transform .2s ease;}
+    .tile:hover{transform:translateY(-3px);}
+    .value{display:block;font-size:var(--value-size);line-height:var(--line-height);font-weight:var(--weight);letter-spacing:.5px;}
+    .label{display:block;font-size:var(--label-size);letter-spacing:.6px;opacity:.9;margin-top:.35rem;}
+    @media (max-width:520px){.grid{grid-template-columns:repeat(2,1fr);}}
+    @media (min-width:1500px){:root{--gap:1.6rem;--tile-pad:1.4rem;}}
+    .final{font-size:clamp(1.2rem,3vw,2.2rem);line-height:1.25;font-weight:600;letter-spacing:.2px;margin:0;}
   </style>
 </head>
 <body>
@@ -117,115 +33,77 @@
     <div class="timer" aria-live="polite" aria-atomic="true">
       <p class="heading" id="lead">Die groot oomblik breek aan oor:</p>
       <div class="spacer" aria-hidden="true"></div>
-      <div class="grid" id="grid"><!-- JS injects tiles here --></div>
+      <div class="grid" id="grid"></div>
     </div>
   </div>
 
   <script>
-    /**
-     * TARGET TIME — pinned to Africa/Johannesburg (UTC+02:00).
-     * 07 February 2026 16:00:00 SAST
-     */
+    // 07 Feb 2026 16:00 (UTC+02:00)
     const TARGET = new Date('2026-02-07T16:00:00+02:00');
 
-    const labels = {
-      months: 'Maande',
-      weeks:  'Weke',
-      days:   'Dae',
-      hours:  'Ure',
-      minutes:'Minute',
-      seconds:'Sekondes'
-    };
-
+    const labels = {months:'Maande',weeks:'Weke',days:'Dae',hours:'Ure',minutes:'Minute',seconds:'Sekondes'};
     const grid = document.getElementById('grid');
     const timerContainer = document.querySelector('.timer');
 
+    // FIXED: prevent month overshoot (e.g., 25 Feb > 7 Feb)
     function monthDiff(from, to){
       let m = (to.getFullYear() - from.getFullYear()) * 12 + (to.getMonth() - from.getMonth());
-      const pivot = new Date(from);
-      pivot.setDate(1);
-      pivot.setMonth(pivot.getMonth() + m);
-      if (pivot > to){ m--; }
-      const exact = new Date(from);
-      exact.setMonth(exact.getMonth() + m);
+      let exact = new Date(from);
+      exact.setMonth(from.getMonth() + m);
+      if (exact > to){               // if we overshot, back off one month
+        m--;
+        exact = new Date(from);
+        exact.setMonth(from.getMonth() + m);
+      }
       return { months: Math.max(0, m), after: exact };
     }
 
     function diffParts(now, target){
-      if (target <= now){
-        return { months:0,weeks:0,days:0,hours:0,minutes:0,seconds:0, done:true };
-      }
+      if (target <= now) return {months:0,weeks:0,days:0,hours:0,minutes:0,seconds:0,done:true};
 
       const md = monthDiff(now, target);
-      let cursor = md.after;
+      let cursor = md.after;                 // cursor <= target guaranteed
 
-      const msTotal = target - cursor;
-      const sTotal = Math.floor(msTotal / 1000);
-
-      const secPer = { week: 604800, day: 86400, hour: 3600, min: 60 };
+      const sTotal = Math.floor((target - cursor) / 1000);
+      const secPer = {week:604800, day:86400, hour:3600, min:60};
       let remain = sTotal;
 
-      const weeks   = Math.max(0, Math.floor(remain / secPer.week));  remain -= weeks  * secPer.week;
-      const days    = Math.max(0, Math.floor(remain / secPer.day));   remain -= days   * secPer.day;
-      const hours   = Math.max(0, Math.floor(remain / secPer.hour));  remain -= hours  * secPer.hour;
-      const minutes = Math.max(0, Math.floor(remain / secPer.min));   remain -= minutes* secPer.min;
+      const weeks   = Math.max(0, Math.floor(remain / secPer.week)); remain -= weeks*secPer.week;
+      const days    = Math.max(0, Math.floor(remain / secPer.day));  remain -= days*secPer.day;
+      const hours   = Math.max(0, Math.floor(remain / secPer.hour)); remain -= hours*secPer.hour;
+      const minutes = Math.max(0, Math.floor(remain / secPer.min));  remain -= minutes*secPer.min;
       const seconds = Math.max(0, remain);
 
-      return { 
-        months: md.months, 
-        weeks, days, hours, minutes, seconds, 
-        done:false 
-      };
+      return {months:md.months,weeks,days,hours,minutes,seconds,done:false};
     }
 
-    function pickFour(parts){
-      const {months,weeks,days,hours,minutes,seconds} = parts;
-
-      if (months > 0) return [
-        ['months', months], ['weeks', weeks], ['days', days], ['hours', hours]
-      ];
-      if (weeks > 0) return [
-        ['weeks', weeks], ['days', days], ['hours', hours], ['minutes', minutes]
-      ];
-      if (days > 0) return [
-        ['days', days], ['hours', hours], ['minutes', minutes], ['seconds', seconds]
-      ];
-      if (hours > 0) return [
-        ['hours', hours], ['minutes', minutes], ['seconds', seconds]
-      ];
-      return [
-        ['minutes', minutes], ['seconds', seconds]
-      ];
+    function pickFour(p){
+      if (p.months>0) return [['months',p.months],['weeks',p.weeks],['days',p.days],['hours',p.hours]];
+      if (p.weeks>0)  return [['weeks',p.weeks],['days',p.days],['hours',p.hours],['minutes',p.minutes]];
+      if (p.days>0)   return [['days',p.days],['hours',p.hours],['minutes',p.minutes],['seconds',p.seconds]];
+      if (p.hours>0)  return [['hours',p.hours],['minutes',p.minutes],['seconds',p.seconds]];
+      return [['minutes',p.minutes],['seconds',p.seconds]];
     }
 
     function renderTiles(tiles){
-      grid.innerHTML = '';
-      tiles.forEach(([key, val]) => {
-        const tile = document.createElement('div');
-        tile.className = 'tile';
-        tile.innerHTML = `
-          <span class="value" aria-label="${val} ${labels[key]}">${val}</span>
-          <span class="label">${labels[key]}</span>
-        `;
+      grid.innerHTML='';
+      tiles.forEach(([key,val])=>{
+        const tile=document.createElement('div');
+        tile.className='tile';
+        tile.innerHTML=`<span class="value" aria-label="${val} ${labels[key]}">${val}</span>
+                        <span class="label">${labels[key]}</span>`;
         grid.appendChild(tile);
       });
     }
 
     function renderFinalMessage(){
-      timerContainer.innerHTML = `
-        <p class="final">Baie geluk, Mnr &amp; Mev. van der Walt!</p>
-      `;
+      timerContainer.innerHTML = `<p class="final">Baie geluk, Mnr &amp; Mev. van der Walt!</p>`;
     }
 
     function tick(){
       const now = new Date();
       const parts = diffParts(now, TARGET);
-
-      if (parts.done){
-        renderFinalMessage();
-        clearInterval(timer);
-        return;
-      }
+      if (parts.done){ renderFinalMessage(); clearInterval(timer); return; }
       renderTiles(pickFour(parts));
     }
 
